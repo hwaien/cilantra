@@ -55,6 +55,8 @@ nunit-*.xml
 
 # SQLite
 cilantra.db
+cilantra.db-shm
+cilantra.db-wal
 
 # Mac
 .DS_Store
