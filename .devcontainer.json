@@ -1,0 +1,7 @@
+{
+    "image": "mcr.microsoft.com/devcontainers/dotnet",
+    "features": {
+        "ghcr.io/warrenbuckley/codespace-features/sqlite:latest": {}
+    },
+    "postCreateCommand": "dotnet tool install --global dotnet-ef && dotnet restore && dotnet ef database update"
+}
