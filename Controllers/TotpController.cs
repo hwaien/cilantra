@@ -8,10 +8,11 @@ namespace Cilantra.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 #pragma warning disable CA1812, CA1515
-public sealed class TotpController(CilantraDbContext context) : ControllerBase
+public sealed partial class TotpController(CilantraDbContext context, ILogger<TotpController> logger) : ControllerBase
 #pragma warning restore CA1812, CA1515
 {
     private readonly CilantraDbContext _context = context;
+    private readonly ILogger<TotpController> _logger = logger;
 
     // Register a new totp device
     [HttpGet("{username}/{deviceName}/key")]
@@ -24,6 +25,7 @@ public sealed class TotpController(CilantraDbContext context) : ControllerBase
 
         if (user is null)
         {
+            LogUserCreation(username);
             user = new User { Username = username };
             this._context.Users.Add(user);
             await this._context.SaveChangesAsync().ConfigureAwait(true);
@@ -33,6 +35,7 @@ public sealed class TotpController(CilantraDbContext context) : ControllerBase
 
         if (device is null)
         {
+            LogDeviceCreation(deviceName);
             // Generate random 20-byte secret
             var secretKey = KeyGeneration.GenerateRandomKey(20);
             var base32Secret = Base32Encoding.ToString(secretKey);
@@ -61,6 +64,7 @@ public sealed class TotpController(CilantraDbContext context) : ControllerBase
 
         if (user is null)
         {
+            LogUnknownUserVerification(username);
             return NotFound();
         }
 
@@ -68,6 +72,7 @@ public sealed class TotpController(CilantraDbContext context) : ControllerBase
 
         if (device is null)
         {
+            LogUnknownDeviceVerification(deviceName, username);
             return NotFound();
         }
 
@@ -79,9 +84,11 @@ public sealed class TotpController(CilantraDbContext context) : ControllerBase
         {
             device.Verified = true;
             await this._context.SaveChangesAsync().ConfigureAwait(true);
+            LogSuccessfulVerification(deviceName, username);
             return Ok();
         }
 
+        LogInvalidCode(deviceName, username);
         return Unauthorized();
     }
 
@@ -93,16 +100,52 @@ public sealed class TotpController(CilantraDbContext context) : ControllerBase
             .FirstOrDefaultAsync(u => u.Username == username)
             .ConfigureAwait(true);
 
-        if (user is null) return Unauthorized();
+        if (user is null)
+        {
+            LogUnknownUserLogin(username);
+            return Unauthorized();
+        }
 
         foreach (var device in user.TotpDevices.Where(d => d.Verified))
         {
             var totp = new Totp(Base32Encoding.ToBytes(device.Secret));
             var isValid = totp.VerifyTotp(code, out var _, VerificationWindow.RfcSpecifiedNetworkDelay);
             if (isValid)
+            {
+                LogSuccessfulLogin(username);
                 return Ok();
+            }
         }
 
+        LogFailedLogin(username);
         return Unauthorized();
     }
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Creating new user {username}...")]
+    private partial void LogUserCreation(string username);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Creating new device {deviceName}...")]
+    private partial void LogDeviceCreation(string deviceName);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Detected attempt to verify device for unknown user {username}")]
+    private partial void LogUnknownUserVerification(string username);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Detected attempt to verify unknown device {deviceName} for user {username}")]
+    private partial void LogUnknownDeviceVerification(string deviceName, string username);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Detected attempt to use invalid code to verify device {deviceName} for user {username}")]
+    private partial void LogInvalidCode(string deviceName, string username);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Verified device {deviceName} for user {username}")]
+    private partial void LogSuccessfulVerification(string deviceName, string username);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Detected attempt to log in unknown user {username}")]
+    private partial void LogUnknownUserLogin(string username);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "User {username} successfully logged in")]
+    private partial void LogSuccessfulLogin(string username);
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Detected failed login for user {username}")]
+    private partial void LogFailedLogin(string username);
+
 }
