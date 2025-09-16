@@ -1,0 +1,11 @@
+root = true
+
+[*.cs]
+# Treat warnings as errors
+dotnet_diagnostic.CA1822.severity = warning
+dotnet_style_qualification_for_field = true:suggestion
+csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+
+[**/Migrations/*.cs]
+dotnet_analyzer_diagnostic.severity = none

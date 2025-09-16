@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cilantra", "Cilantra.csproj", "{3908E82D-7B48-8D13-B9BE-D492EE8DEB38}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3908E82D-7B48-8D13-B9BE-D492EE8DEB38}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3908E82D-7B48-8D13-B9BE-D492EE8DEB38}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3908E82D-7B48-8D13-B9BE-D492EE8DEB38}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3908E82D-7B48-8D13-B9BE-D492EE8DEB38}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2FE169E1-CA6D-4697-A878-8406E7DE1F2A}
+	EndGlobalSection
+EndGlobal
