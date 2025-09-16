@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/Cilantra.csproj",
+                "${workspaceFolder}/Cilantra/Cilantra.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/Cilantra.csproj",
+                "${workspaceFolder}/Cilantra/Cilantra.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary;ForceNoAlign"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/Cilantra.csproj"
+                "${workspaceFolder}/Cilantra/Cilantra.csproj"
             ],
             "problemMatcher": "$msCompile"
         }
